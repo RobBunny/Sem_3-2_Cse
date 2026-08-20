@@ -1,0 +1,117 @@
+#include <bits/stdc++.h>
+using namespace std;
+
+int main()
+{
+
+    int n, m;
+
+    n = 4, m = 3;
+
+    int Existing[m] = {9, 5, 7};
+
+    int Allocation[n][m] = {{0, 1, 0}, {2, 0, 0}, {3, 0, 2}, {2, 1, 1}};
+
+    int Max[n][m] = {{7, 5, 3}, {3, 2, 2}, {9, 0, 2}, {2, 2, 2}};
+
+    int Available[m];
+
+    int PerResourceAllocation[m] = {0};
+
+    for (int j = 0; j < m; j++)
+    {
+        for (int i = 0; i < n; i++)
+        {
+            PerResourceAllocation[j] += Allocation[i][j];
+        }
+    }
+
+    for (int i = 0; i < m; i++)
+    {
+        Available[i] = Existing[i] - PerResourceAllocation[i];
+    }
+
+    int Need[n][m];
+
+    for (int i = 0; i < n; i++)
+    {
+        for (int j = 0; j < m; j++)
+        {
+            Need[i][j] = Max[i][j] - Allocation[i][j];
+        }
+    }
+
+    int CurrAvailable[m];
+
+    for (int i = 0; i < m; i++)
+    {
+        CurrAvailable[i] = Available[i];
+    }
+
+    bool Finish[n] = {false};
+
+    int SafeSequence[n];
+
+    int count = 0;
+
+    while (count < n)
+    {
+        bool found = false;
+
+        for (int i = 0; i < n; i++)
+        {
+            if (Finish[i] == false)
+            {
+                bool canExecute = true;
+
+                for (int j = 0; j < m; j++)
+                {
+                    if (Need[i][j] > CurrAvailable[j])
+                    {
+                        canExecute = false;
+                        break;
+                    }
+                }
+
+                if (canExecute)
+                {
+
+                    for (int j = 0; j < m; j++)
+                    {
+                        CurrAvailable[j] += Allocation[i][j];
+                    }
+
+                    Finish[i] = true;
+
+                    SafeSequence[count] = i;
+                    count++;
+
+                    found = true;
+                }
+            }
+        }
+
+        if (found == false)
+        {
+            break;
+        }
+    }
+
+    if (count == n)
+    {
+        cout << "System is SAFE\n";
+
+        cout << "Safe Sequence: ";
+
+        for (int i = 0; i < n; i++)
+        {
+            cout << "P" << SafeSequence[i] << "->";
+        }
+    }
+    else
+    {
+        cout << "System is UNSAFE" << endl;
+    }
+
+    return 0;
+}
